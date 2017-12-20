@@ -2,7 +2,7 @@
 
 **NOT IMPLEMENTED YET**
 
-The code is an implementation of Dan Klein's DMV model ( named "**Dependency Model with Valence**" ).
+The code is an implementation of Dan Klein's DMV model ( named "**Dependency Model with Valence**", `ACL-2004` ) and the neural version proposed by Yong Jiang( `EMNLP-2016`  ).
 
 ## Requirements
 *See `pom.xml` for details*
