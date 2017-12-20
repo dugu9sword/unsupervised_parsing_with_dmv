@@ -17,10 +17,10 @@ class Sentence : ArrayList<WordElement>() {
 }
 
 object Special {
-    val ROOT = "<root>"
-    val UNK = "<unk>"
-    val NONE = "<none>"
-    val DIGIT = "<digit>"
+    val ROOT = "*ROOT"
+    val UNK = "*UNK"
+    val NONE = "*NON"
+    val DIGIT = "*DIG"
 }
 
 
