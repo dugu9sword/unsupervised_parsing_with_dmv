@@ -1,6 +1,11 @@
 package dugu9sword.treebank
 
-data class Accuracy(val corr_num: Int, val total_num: Int)
+data class Accuracy(val corrNum: Int, val totalNum: Int) {
+    operator fun plus(accuracy: Accuracy): Accuracy {
+        return Accuracy(corrNum = corrNum + accuracy.corrNum,
+                totalNum = totalNum + accuracy.totalNum)
+    }
+}
 
 private fun isPunctuation(word: String): Boolean {
     return !word.contains(Regex("""[a-zA-Z0-9]"""))

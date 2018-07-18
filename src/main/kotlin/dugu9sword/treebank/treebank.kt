@@ -25,14 +25,14 @@ object Special {
 
 
 class TreeBank(path: String,
-               val p_word: Int = 1,
-               val p_tag: Int = 4,
-               val p_parent: Int = 6,
-               val p_arc: Int = 7) {
+               val pWord: Int = 1,
+               val pTag: Int = 4,
+               val pParent: Int = 6,
+               val pArc: Int = 7) {
     val sentences = ArrayList<Sentence>()
-    val word_dict = HashMap<String, Int>()
-    val tag_dict = HashMap<String, Int>()
-    val arc_dict = HashMap<String, Int>()
+    val wordDict = HashMap<String, Int>()
+    val tagDict = HashMap<String, Int>()
+    val arcDict = HashMap<String, Int>()
 
     init {
         val reader = BufferedReader(FileReader(path))
@@ -46,17 +46,17 @@ class TreeBank(path: String,
         }
 //        sentences.forEach { x -> println(x) }
 
-        for (dict in listOf(word_dict, tag_dict, arc_dict)) {
-            dict.put(Special.ROOT, 0)
-            dict.put(Special.NONE, 1)
-            dict.put(Special.UNK, 2)
-            dict.put(Special.DIGIT, 3)
+        for (dict in listOf(wordDict, tagDict, arcDict)) {
+            dict[Special.ROOT] = 0
+            dict[Special.NONE] = 1
+            dict[Special.UNK] = 2
+            dict[Special.DIGIT] = 3
         }
         for (sentence in sentences)
             for (element in sentence) {
-                word_dict.putIfAbsent(element.word, word_dict.size)
-                tag_dict.putIfAbsent(element.tag, tag_dict.size)
-                arc_dict.putIfAbsent(element.arc, arc_dict.size)
+                wordDict.putIfAbsent(element.word, wordDict.size)
+                tagDict.putIfAbsent(element.tag, tagDict.size)
+                arcDict.putIfAbsent(element.arc, arcDict.size)
             }
     }
 
@@ -65,11 +65,11 @@ class TreeBank(path: String,
         for (line in lines) {
             val split = line.split("\t")
             val word =
-                    if (Regex(""".*\d+.*""").matches(split[p_word]))
+                    if (Regex(""".*\d+.*""").matches(split[pWord]))
                         Special.DIGIT
                     else
-                        split[p_word].toLowerCase()
-            sentence.add(WordElement(word, split[p_tag], split[p_parent].toInt(), split[p_arc]))
+                        split[pWord].toLowerCase()
+            sentence.add(WordElement(word, split[pTag], split[pParent].toInt(), split[pArc]))
         }
         return sentence
     }

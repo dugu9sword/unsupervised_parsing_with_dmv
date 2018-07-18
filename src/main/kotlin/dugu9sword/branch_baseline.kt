@@ -3,9 +3,9 @@ package dugu9sword
 import dugu9sword.treebank.TreeBank
 import dugu9sword.treebank.computeAccuracy
 
-val leftBranch = true
+val leftBranch = false
 val directional = false
-val wsj10 = false
+val wsj10 = true
 
 
 fun main(args: Array<String>) {
@@ -18,12 +18,12 @@ fun main(args: Array<String>) {
         treebank.sentences
     for (sentence in sentences) {
         val prediction = if (leftBranch)
-            listOf<Int>(-1) + (2 until sentence.size).toList() + 0
+            listOf(-1) + (2 until sentence.size).toList() + 0
         else
-            listOf<Int>(-1) + 0 + (1 until sentence.size - 1).toList()
+            listOf(-1) + 0 + (1 until sentence.size - 1).toList()
         val accuracy = computeAccuracy(sentence, prediction, directional)
-        corr += accuracy.corr_num
-        total += accuracy.total_num
+        corr += accuracy.corrNum
+        total += accuracy.totalNum
     }
     println("Accuracy: ${corr.toFloat() / total}")
 }
