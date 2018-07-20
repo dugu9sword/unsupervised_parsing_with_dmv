@@ -7,8 +7,6 @@ typealias Array4D<T> = Array<Array<Array<Array<T>>>>
 typealias Array5D<T> = Array<Array<Array<Array<Array<T>>>>>
 
 
-
-
 // 1d array
 inline fun <reified T> arrayAs(
         d1: Int,
@@ -72,4 +70,38 @@ inline fun <reified T1, reified T2> arrayAs(
         array: Array5D<T1>,
         noinline init: (Int) -> T2): Array5D<T2> {
     return arrayAs(array.size, array[0].size, array[0][0].size, array[0][0][0].size, array[0][0][0][0].size, init)
+}
+
+fun doubleArrayAs(d1: Int, d2: Int, d3: Int, init: (Int) -> Double): Array2D<DoubleArray> {
+    return arrayAs(d1, d2) {
+        DoubleArray(d3, init)
+    }
+}
+
+fun doubleArrayAs(d1: Int, d2: Int, d3: Int, d4: Int, init: (Int) -> Double): Array3D<DoubleArray> {
+    return arrayAs(d1, d2, d3) {
+        DoubleArray(d4, init)
+    }
+}
+
+fun booleanArrayAs(d1: Int, d2: Int, d3: Int, d4: Int, init: (Int) -> Boolean): Array3D<BooleanArray> {
+    return arrayAs(d1, d2, d3) {
+        BooleanArray(d4, init)
+    }
+}
+
+
+data class Fraction(val numerator: Float = 0.0f, val denominator: Float = 0.0f) {
+    operator fun plus(fraction: Fraction): Fraction {
+        return Fraction(numerator = numerator + fraction.numerator,
+                denominator = denominator + fraction.denominator)
+    }
+
+    fun eval(): Float {
+        return numerator / (denominator + 1e-12f)
+    }
+
+    override fun toString(): String {
+        return "$numerator/$denominator=${numerator / (denominator + 1e-12f)}"
+    }
 }

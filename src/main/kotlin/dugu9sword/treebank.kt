@@ -1,4 +1,4 @@
-package dugu9sword.treebank
+package dugu9sword
 
 import java.io.BufferedReader
 import java.io.FileReader
@@ -17,18 +17,18 @@ class Sentence : ArrayList<WordElement>() {
 }
 
 object Special {
-    val ROOT = "*ROOT"
-    val UNK = "*UNK"
-    val NONE = "*NON"
-    val DIGIT = "*DIG"
+    const val ROOT = "*ROOT"
+    const val UNK = "*UNK"
+    const val NONE = "*NON"
+    const val DIGIT = "*DIG"
 }
 
 
 class TreeBank(path: String,
-               val pWord: Int = 1,
-               val pTag: Int = 4,
-               val pParent: Int = 6,
-               val pArc: Int = 7) {
+               private val pWord: Int = 1,
+               private val pTag: Int = 4,
+               private val pParent: Int = 6,
+               private val pArc: Int = 7) {
     val sentences = ArrayList<Sentence>()
     val wordDict = HashMap<String, Int>()
     val tagDict = HashMap<String, Int>()
@@ -39,7 +39,8 @@ class TreeBank(path: String,
         val lines = ArrayList<String>()
         for (line: String in reader.lines()) {
             if (line == "") {
-                sentences.add(buildSentence(lines))
+                if (lines.size > 1)
+                    sentences.add(buildSentence(lines))
                 lines.clear()
             } else
                 lines.add(line)
@@ -74,6 +75,33 @@ class TreeBank(path: String,
         return sentence
     }
 
+}
+
+private fun isPunctuation(word: String): Boolean {
+    return !word.contains(Regex("""[a-zA-Z0-9]"""))
+}
+
+
+fun computeAccuracy(sentence: Sentence, prediction: List<Int>, isDirected: Boolean = true): Fraction {
+    var corr = 0.0f
+    var total = 0.0f
+
+    for (i in 1 until sentence.size) {
+        if (isPunctuation(sentence[i].word))
+            continue
+        total++
+        when (isDirected) {
+            true ->
+                if (sentence[i].parent == prediction[i])
+                    corr++
+            false ->
+                if (sentence[i].parent == prediction[i] ||
+                        prediction[i] in 0 until sentence.size && sentence[prediction[i]].parent == i) {
+                    corr++
+                }
+        }
+    }
+    return Fraction(corr, total)
 }
 
 fun main(args: Array<String>) {

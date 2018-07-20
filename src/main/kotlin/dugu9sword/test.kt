@@ -1,15 +1,20 @@
 package dugu9sword
 
-
+import dugu9sword.dmv.Count
+import org.nd4j.linalg.util.ArrayUtil
+import org.nd4j.linalg.factory.Nd4j as nj
 
 
 fun main(args: Array<String>) {
-    val x = mapOf<String, Int>(
-            "a" to 0,
-            "c" to 2,
-            "b" to 1
-    )
-    for (ele in x){
-        print(ele.key)
-    }
+    val count = Count()
+    println(count.chooseCases)
+    println(ArrayUtil.flattenDoubleArray(count.chooseCases))
+//
+//    FuckKotlin().da()
+////    println(x)
+////    println(arrayOf(count.chooseCases.size,count.chooseCases[0][0].size,count.chooseCases[0][0].size))
+    val choo = nj.create(ArrayUtil.flattenDoubleArray(count.chooseCases),
+            intArrayOf(count.chooseCases.size, count.chooseCases[0].size, count.chooseCases[0][0].size))
+    val sum_choo = choo.sum(2)
+    choo.divColumnVector(sum_choo)
 }
