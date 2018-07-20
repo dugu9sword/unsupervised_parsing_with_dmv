@@ -5,9 +5,9 @@ import java.io.FileReader
 
 data class WordElement(val word: String,
                        val tag: String,
-                       val parent: Int,
+                       val head: Int,
                        val arc: String) {
-    override fun toString(): String = "($word,$tag,$parent,$arc)"
+    override fun toString(): String = "($word,$tag,$head,$arc)"
 }
 
 class Sentence : ArrayList<WordElement>() {
@@ -81,6 +81,22 @@ private fun isPunctuation(word: String): Boolean {
     return !word.contains(Regex("""[a-zA-Z0-9]"""))
 }
 
+const val eps = 1e-12
+
+data class Fraction(val numerator: Float = 0.0f, val denominator: Float = 0.0f) {
+    operator fun plus(fraction: Fraction): Fraction {
+        return Fraction(numerator = numerator + fraction.numerator,
+                denominator = denominator + fraction.denominator)
+    }
+
+    fun eval(): Float {
+        return numerator / (denominator + 1e-12f)
+    }
+
+    override fun toString(): String {
+        return "$numerator/$denominator=${numerator / (denominator + eps)}"
+    }
+}
 
 fun computeAccuracy(sentence: Sentence, prediction: List<Int>, isDirected: Boolean = true): Fraction {
     var corr = 0.0f
@@ -92,11 +108,11 @@ fun computeAccuracy(sentence: Sentence, prediction: List<Int>, isDirected: Boole
         total++
         when (isDirected) {
             true ->
-                if (sentence[i].parent == prediction[i])
+                if (sentence[i].head == prediction[i])
                     corr++
             false ->
-                if (sentence[i].parent == prediction[i] ||
-                        prediction[i] in 0 until sentence.size && sentence[prediction[i]].parent == i) {
+                if (sentence[i].head == prediction[i] ||
+                        prediction[i] in 0 until sentence.size && sentence[prediction[i]].head == i) {
                     corr++
                 }
         }

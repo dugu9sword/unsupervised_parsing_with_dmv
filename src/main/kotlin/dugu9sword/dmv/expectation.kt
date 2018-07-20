@@ -5,8 +5,8 @@ import dugu9sword.Sentence
 // Given a sentence, compute the inside terms and outside terms
 fun computeInsideOutside(sentence: Sentence, params: Params): IOPair {
     val tags = sentence.map { it.tag }
-    val insideTerms = IOTerm(sentenceSize = sentence.size)
-    val outsideTerms = IOTerm(sentenceSize = sentence.size)
+    val insideTerms = PotentialTerm(sentenceSize = sentence.size)
+    val outsideTerms = PotentialTerm(sentenceSize = sentence.size)
 
     var insideTimes = 0
     var outsideTimes = 0
@@ -212,5 +212,5 @@ fun computeInsideOutside(sentence: Sentence, params: Params): IOPair {
 // Given a sentence and the inside/outside terms, calculate the expected count
 // for different rules.
 fun expectCount(sentence: Sentence, params: Params, ioPair: IOPair): Count {
-    throw NotImplementedError()
+    return Count()
 }

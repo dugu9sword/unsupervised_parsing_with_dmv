@@ -6,7 +6,7 @@ import dugu9sword.Sentence
 // Given a sentence, decode the tree and return the prediction
 fun decode(sentence: Sentence, params: Params): List<Int> {
     val tags = sentence.map { it.tag }
-    val decodingTerms = IOTerm(sentenceSize = sentence.size)
+    val decodingTerms = PotentialTerm(sentenceSize = sentence.size)
     val tree = Tree()
 
     fun maxSpanning(h_seal: Int, h: Int, i: Int, j: Int): Double {
@@ -45,7 +45,7 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
                             STOP_NODE)
                 }
                 if (h != i) {
-                    var good_prob = 0.0
+                    var good_prob = Double.NEGATIVE_INFINITY
                     var good_k = 0
                     var good_a = 0
                     for (k in i..(h - 1)) {
@@ -86,7 +86,7 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
                     prob = 1.0
                 }
                 if (i < j) {
-                    var good_prob = 0.0
+                    var good_prob = Double.NEGATIVE_INFINITY
                     var good_k = 0
                     var good_a = 0
                     for (k in (i + 1)..j) {
@@ -112,6 +112,8 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
             }
         }
         assert(prob >= 0.0)
+        decodingTerms.flags[h_seal][h][i][j]=true
+        decodingTerms.quantities[h_seal][h][i][j]=prob
         return prob
     }
 
