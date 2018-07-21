@@ -81,7 +81,7 @@ private fun isPunctuation(word: String): Boolean {
     return !word.contains(Regex("""[a-zA-Z0-9]"""))
 }
 
-const val eps = 1e-12
+const val eps = 1e-100
 
 data class Fraction(val numerator: Float = 0.0f, val denominator: Float = 0.0f) {
     operator fun plus(fraction: Fraction): Fraction {

@@ -23,7 +23,7 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
                  *      L SEALING:
                  *          [h-]{i..j} -> [h⇆]{i..j}
                  */
-                val valence = if (h == i) Valence.F else Valence.T
+                val valence = if (h == i) Valence.ADJ else Valence.NON_ADJ
                 prob = params.stopProbs[h_tag][Dir.L][valence] * maxSpanning(Seal.L_UNSEALED, h, i, j)
                 tree.attach(parent,
                         STOP_NODE,
@@ -38,7 +38,7 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
                  *          [h⇆]{i..j} -> [h→]{i..j}
                  */
                 if (h == i) {
-                    val valence = if (h == j) Valence.F else Valence.T
+                    val valence = if (h == j) Valence.ADJ else Valence.NON_ADJ
                     prob = params.stopProbs[h_tag][Dir.R][valence] * maxSpanning(Seal.R_UNSEALED, h, i, j)
                     tree.attach(parent,
                             Node(Seal.R_UNSEALED, h, i, j),
@@ -51,7 +51,7 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
                     for (k in i..(h - 1)) {
                         for (a in i..k) {
                             val a_tag = tagToId[tags[a]]!!
-                            val valence = if (h == a + 1) Valence.F else Valence.T
+                            val valence = if (h == a + 1) Valence.ADJ else Valence.NON_ADJ
                             val case_prob = (1 - params.stopProbs[h_tag][Dir.L][valence]) *
                                     params.chooseProbs[h_tag][Dir.L][a_tag] *
                                     maxSpanning(Seal.SEALED, a, i, k) *
@@ -92,7 +92,7 @@ fun decode(sentence: Sentence, params: Params): List<Int> {
                     for (k in (i + 1)..j) {
                         for (a in (k..j)) {
                             val a_tag = tagToId[tags[a]]!!
-                            val valence = if (k == h + 1) Valence.F else Valence.T
+                            val valence = if (k == h + 1) Valence.ADJ else Valence.NON_ADJ
                             val case_prob = (1 - params.stopProbs[h_tag][Dir.R][valence]) *
                                     params.chooseProbs[h_tag][Dir.R][a_tag] *
                                     maxSpanning(Seal.SEALED, a, k, j) *

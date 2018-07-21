@@ -11,7 +11,7 @@ fun maximization(count: Count): Params {
         for (j in 0 until count.chooseCases[0].size) {
             val sum = count.chooseCases[i][j].sum() + eps
             for (k in 0 until count.chooseCases[0][0].size)
-                params.chooseProbs[i][j][k] /= sum
+                params.chooseProbs[i][j][k] = count.chooseCases[i][j][k]/ sum
         }
     // update stop rules
     for (i in 0 until count.decideToStopCases.size)

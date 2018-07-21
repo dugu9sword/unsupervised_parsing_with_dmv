@@ -35,8 +35,8 @@ object Dir {
 
 // Valences.
 object Valence {
-    const val F = 0
-    const val T = 1
+    const val ADJ = 0
+    const val NON_ADJ = 1
 
     const val size = 2
 }
@@ -88,7 +88,7 @@ val testTreeBank = TreeBank("dataset/wsj_test.txt", 1, 3, 6, 7)
 
 // Tags.
 val tagToId = trainTreeBank.tagDict
-val idToTag = tagToId.map { it.value to it.key }
+val idToTag = tagToId.map { it.value to it.key }.toMap()
 val tagNum = tagToId.size
 
 
@@ -109,6 +109,8 @@ class Params {
         }
         return arrayAs(tagToId.size, Dir.size) { _sumToOneArray(tagToId.size) }
     }
+
+
 }
 
 // Counts of rules.
@@ -124,6 +126,30 @@ class Count(
     }
 }
 
+fun showChooseItems(chooseItems: DoubleArray3D, tag: String, left: Boolean = true, argTags: List<String>) {
+    val idx = tagToId[tag]!!
+    for (argTag in argTags) {
+        val argTagIdx = tagToId[argTag]!!
+        val value = if (left)
+            chooseItems[idx][Dir.L][argTagIdx]
+        else
+            chooseItems[idx][Dir.R][argTagIdx]
+        val direction = if (left) "L" else "R"
+        println("$tag $direction -> $argTag: $value")
+    }
+    println()
+}
+
+fun showStopItems(stopItems: DoubleArray3D, tag: String) {
+    val idx = tagToId[tag]!!
+
+    println("$tag, L, NON-ADJ: ${stopItems[idx][Dir.L][Valence.NON_ADJ]}")
+    println("$tag, R, NON-ADJ: ${stopItems[idx][Dir.R][Valence.NON_ADJ]}")
+    println("$tag, L, ADJ: ${stopItems[idx][Dir.L][Valence.ADJ]}")
+    println("$tag, R, ADJ: ${stopItems[idx][Dir.R][Valence.ADJ]}")
+    println()
+}
+
 fun sumDoubleArray3D(array1: DoubleArray3D, array2: DoubleArray3D): DoubleArray3D {
     val shape0 = array1.size
     val shape1 = array1[0].size
@@ -135,3 +161,5 @@ fun sumDoubleArray3D(array1: DoubleArray3D, array2: DoubleArray3D): DoubleArray3
                 sum[i][j][k] = array1[i][j][k] + array2[i][j][k]
     return sum
 }
+
+val logger = Logger("log.txt")
