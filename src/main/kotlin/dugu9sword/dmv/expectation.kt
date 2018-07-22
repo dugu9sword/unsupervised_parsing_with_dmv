@@ -1,5 +1,6 @@
 package dugu9sword.dmv
 
+import dugu9sword.Color
 import dugu9sword.Sentence
 import dugu9sword.yellow
 
@@ -12,23 +13,14 @@ fun expectCount(sentence: Sentence, params: Params): Count {
     val tags = sentence.map { it.tag }
     val sentenceSize = sentence.size
 
-//    println(io.outside(Seal.L_UNSEALED, 2, 1, 9))
-//    println(io.outside(Seal.SEALED, 2, 1, 9))
-//    println(yellow(io.inside(Seal.SEALED, 0, 0, 9)))
-//    println(yellow(io.inside(Seal.L_UNSEALED, 0, 0, 9)))
-//    println(yellow(io.inside(Seal.R_UNSEALED, 0, 0, 9)))
-//    for (a in 1..9)
-    println(yellow(io.inside(Seal.SEALED, 1, 1, 1)))
-    println(yellow(io.outside(Seal.SEALED, 1, 1, 1)))
-//    println(yellow(io.inside(Seal.L_UNSEALED, 1, 1, 1)))
-//    println(yellow(io.inside(Seal.R_UNSEALED, 1, 1, 1)))
-    println(yellow(io.count(Seal.SEALED, 1,1,1)))
+//    dbg.log(io.outside(Seal.SEALED, 1,1,4), Color.RED)
 
-//    showStopItems(params.stopProbs, "*ROOT")
-    showStopItems(params.stopProbs, "PRP")
-//    exitProcess(0)
+//    dbg.log(io.outside(Seal.R_UNSEALED, 0,0,4), Color.RED)
+//    dbg.log(io.outside(Seal.R_UNSEALED, 0,0,5), Color.RED)
 //
-    logger.log("\n======================\n")
+//    dbg.log(io.inside( Seal.SEALED, 5, 5, 5), Color.RED)
+//    dbg.log(view(params.chooseProbs, "NNP", 'R', tags.toSet().toList()), Color.RED)
+
 
     // count stop rules
     for (h in 0 until sentenceSize) {
@@ -98,7 +90,7 @@ class InsideOutsideCounter(
                 inside(Seal.L_UNSEALED, h, k + 1, j) *
                 outside(Seal.L_UNSEALED, h, i, j) *
                 params.chooseProbs[hTagIdx][Dir.L][aTagIdx]
-        logger.log("outside: ${tags[h]}${seal_to_label[Seal.L_UNSEALED]}\t[$i, $j] = ${outside(Seal.L_UNSEALED, h, i, j)}\n")
+//        dbg.log("outside: ${tags[h]}${seal_to_label[Seal.L_UNSEALED]}\t[$i, $j] = ${outside(Seal.L_UNSEALED, h, i, j)}\n")
         return ret
     }
 
@@ -197,7 +189,7 @@ class InsideOutsideCounter(
 
 
     fun outside(hSeal: Int, h: Int, i: Int, j: Int): Double {
-//        logger.log("outside: ${tags[h]}${seal_to_label[hSeal]}\t[$i, $j]\n")
+//        dbg.log("outside: ${tags[h]}${seal_to_label[hSeal]}\t[$i, $j]\n")
 
         /** Terminal case **/
         if (outsideTerms.flags[hSeal][h][i][j])

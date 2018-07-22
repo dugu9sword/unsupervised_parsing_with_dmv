@@ -26,9 +26,9 @@ object Special {
 
 class TreeBank(path: String,
                private val pWord: Int = 1,
-               private val pTag: Int = 4,
-               private val pParent: Int = 6,
-               private val pArc: Int = 7) {
+               private val pTag: Int = 2,
+               private val pParent: Int = 3,
+               private val pArc: Int = 4) {
     val sentences = ArrayList<Sentence>()
     val wordDict = HashMap<String, Int>()
     val tagDict = HashMap<String, Int>()
@@ -47,12 +47,14 @@ class TreeBank(path: String,
         }
 //        sentences.forEach { x -> println(x) }
 
-        for (dict in listOf(wordDict, tagDict, arcDict)) {
-            dict[Special.ROOT] = 0
-            dict[Special.NONE] = 1
-            dict[Special.UNK] = 2
-            dict[Special.DIGIT] = 3
-        }
+        wordDict[Special.ROOT] = 0
+        wordDict[Special.NONE] = 1
+        wordDict[Special.UNK] = 2
+        wordDict[Special.DIGIT] = 3
+        tagDict[Special.ROOT] = 0
+        tagDict[Special.UNK] = 1
+        arcDict[Special.ROOT] = 0
+
         for (sentence in sentences)
             for (element in sentence) {
                 wordDict.putIfAbsent(element.word, wordDict.size)

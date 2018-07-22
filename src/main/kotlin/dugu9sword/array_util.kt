@@ -97,3 +97,13 @@ fun booleanArrayAs(d1: Int, d2: Int, d3: Int, d4: Int, init: (Int) -> Boolean): 
         BooleanArray(d4, init)
     }
 }
+
+
+fun normalizeDoubleArray_(doubleArray3D: DoubleArray3D) {
+    for (i in 0 until doubleArray3D.size)
+        for (j in 0 until doubleArray3D[0].size) {
+            val sum = doubleArray3D[i][j].sum() + eps
+            for (k in 0 until doubleArray3D[0][0].size)
+                doubleArray3D[i][j][k] = doubleArray3D[i][j][k] / sum
+        }
+}

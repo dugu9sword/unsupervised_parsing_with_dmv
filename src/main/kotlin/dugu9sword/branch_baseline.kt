@@ -1,7 +1,7 @@
 package dugu9sword
 
 const val isLeftBranch = true
-const val isDirected = false
+const val isDirected = true
 const val useWSJ10 = true
 
 

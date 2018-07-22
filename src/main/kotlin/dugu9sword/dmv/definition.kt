@@ -1,6 +1,7 @@
 package dugu9sword.dmv
 
 import dugu9sword.*
+import org.bytedeco.javacpp.presets.opencv_core
 import java.util.HashMap
 import org.nd4j.linalg.factory.Nd4j as nj
 
@@ -82,35 +83,20 @@ class Tree {
 
 
 // Tree banks.
-val trainTreeBank = TreeBank("dataset/wsj_develop.txt", 1, 3, 6, 7)
-val testTreeBank = TreeBank("dataset/wsj_test.txt", 1, 3, 6, 7)
+val trainTreeBank = TreeBank("dataset/wsj_train.p.txt")
+val testTreeBank = TreeBank("dataset/wsj_test.p.txt")
 
 
 // Tags.
 val tagToId = trainTreeBank.tagDict
 val idToTag = tagToId.map { it.value to it.key }.toMap()
 val tagNum = tagToId.size
-
+val allTags = trainTreeBank.tagDict.map { it.key }
 
 // Params of the model.
 class Params {
-    val chooseProbs = initChooseProbs()
-    val stopProbs = initStopProbs()
-
-    private fun initStopProbs(): DoubleArray3D {
-        return doubleArrayAs(tagToId.size, Dir.size, Valence.size) { Math.random() }
-    }
-
-    private fun initChooseProbs(): DoubleArray3D {
-        fun _sumToOneArray(dim: Int): DoubleArray {
-            val array = DoubleArray(dim) { Math.random() }
-            val sum = array.reduce { a, b -> a + b }
-            return array.map { it / sum }.toDoubleArray()
-        }
-        return arrayAs(tagToId.size, Dir.size) { _sumToOneArray(tagToId.size) }
-    }
-
-
+    val chooseProbs = doubleArrayAs(tagToId.size, Dir.size, tagToId.size) { 0.0 }
+    val stopProbs = doubleArrayAs(tagToId.size, Dir.size, Valence.size) { 0.0 }
 }
 
 // Counts of rules.
@@ -126,28 +112,25 @@ class Count(
     }
 }
 
-fun showChooseItems(chooseItems: DoubleArray3D, tag: String, left: Boolean = true, argTags: List<String>) {
+
+fun view(chooseItems: DoubleArray3D, tag: String, dir: Char = 'L', argTags: List<String>): String {
     val idx = tagToId[tag]!!
-    for (argTag in argTags) {
-        val argTagIdx = tagToId[argTag]!!
-        val value = if (left)
-            chooseItems[idx][Dir.L][argTagIdx]
-        else
-            chooseItems[idx][Dir.R][argTagIdx]
-        val direction = if (left) "L" else "R"
-        println("$tag $direction -> $argTag: $value")
-    }
-    println()
+    val argTagIdxes = argTags.map { tagToId[it] }
+    val direction = if (dir == 'L') Dir.L else Dir.R
+    val values = argTagIdxes.map { chooseItems[idx][direction][it!!] }
+    return argTagIdxes.zip(values)
+            .sortedByDescending { it.second }
+            .map { "$tag $dir -> ${idToTag[it.first]}: ${it.second}\n" }
+            .reduce { a, b -> a + b }.toString()
 }
 
-fun showStopItems(stopItems: DoubleArray3D, tag: String) {
+fun view(stopItems: DoubleArray3D, tag: String): String {
     val idx = tagToId[tag]!!
 
-    println("$tag, L, NON-ADJ: ${stopItems[idx][Dir.L][Valence.NON_ADJ]}")
-    println("$tag, R, NON-ADJ: ${stopItems[idx][Dir.R][Valence.NON_ADJ]}")
-    println("$tag, L, ADJ: ${stopItems[idx][Dir.L][Valence.ADJ]}")
-    println("$tag, R, ADJ: ${stopItems[idx][Dir.R][Valence.ADJ]}")
-    println()
+    return "$tag, L, NON-ADJ: ${stopItems[idx][Dir.L][Valence.NON_ADJ]}\n" +
+            "$tag, R, NON-ADJ: ${stopItems[idx][Dir.R][Valence.NON_ADJ]}\n" +
+            "$tag, L, ADJ: ${stopItems[idx][Dir.L][Valence.ADJ]}\n" +
+            "$tag, R, ADJ: ${stopItems[idx][Dir.R][Valence.ADJ]}\n"
 }
 
 fun sumDoubleArray3D(array1: DoubleArray3D, array2: DoubleArray3D): DoubleArray3D {
@@ -162,4 +145,4 @@ fun sumDoubleArray3D(array1: DoubleArray3D, array2: DoubleArray3D): DoubleArray3
     return sum
 }
 
-val logger = Logger("log.txt")
+val dbg = Debugger("log.txt")
