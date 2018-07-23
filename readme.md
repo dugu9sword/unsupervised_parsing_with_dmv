@@ -1,13 +1,17 @@
 # Unsupervised Dependency Parsing with DMV
 
-**NOT IMPLEMENTED YET**
 
-The code is an implementation of Dan Klein's DMV model ( named "**Dependency Model with Valence**", `ACL-2004` ) and the neural version proposed by Yong Jiang( `EMNLP-2016`  ).
+The code is an implementation of:
+- A **left/right-branch** baseline.
+- Dan Klein's DMV model ( named "**Dependency Model with Valence**", `ACL-2004` ). 
+- Yong Jiang's neural version ( `EMNLP-2016`  ). (*not implemented yet*)
+
+Some notes can be found in `note.md`.
 
 ## Requirements
 *See `pom.xml` for details*
 - Java 1.8 (or higher)
-- Kotlin 1.1 (or higher)
+- Kotlin 1.2 (or higher)
 - DeepLearning4J 0.9.1 (or higher)
 - ND4J 0.9.1 (or higher)
 

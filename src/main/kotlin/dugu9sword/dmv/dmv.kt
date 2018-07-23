@@ -10,14 +10,14 @@ fun main(args: Array<String>) {
     val testSentences = testTreeBank.sentences.filter { it.size in 0..11 }
 
     var params = Params()
-    initChooseProbs(params, trainSentences, ChooseProbInitMode.EQUAL)
+    initChooseProbs(params, trainSentences, ChooseProbInitMode.PRIOR)
     initStopProbs(params, trainSentences)
 
     println("Size: ${trainSentences.size}")
 
 //    val tagsToShow = trainSentences[0].map { it -> it.tag }.toHashSet().toList()
     val tagsToShow = allTags
-    for (epochId in 0 until 5) {
+    for (epochId in 0 until 1) {
 
         if (epochId == 0) {
             dbg.log(view(params.chooseProbs, "*ROOT", 'R', tagsToShow),
@@ -90,8 +90,9 @@ fun main(args: Array<String>) {
 
 enum class ChooseProbInitMode {
     RANDOM,
-    EQUAL,
-    HARMONIC
+    UNIFORM,
+    HARMONIC,
+    PRIOR,
 }
 
 fun initChooseProbs(params: Params, sentences: List<Sentence>, initMode: ChooseProbInitMode) {
@@ -107,7 +108,7 @@ fun initChooseProbs(params: Params, sentences: List<Sentence>, initMode: ChooseP
     }
 
     when (initMode) {
-        ChooseProbInitMode.EQUAL -> {
+        ChooseProbInitMode.UNIFORM -> {
             for (pTagIdx in 0 until tagNum)
                 for (cTagIdx in 0 until tagNum)
                     if (pTagIdx != rootId && cTagIdx != rootId) {
@@ -151,7 +152,24 @@ fun initChooseProbs(params: Params, sentences: List<Sentence>, initMode: ChooseP
             normalizeDoubleArray_(params.chooseProbs)
         }
         ChooseProbInitMode.RANDOM -> {
-
+            for (pTagIdx in 0 until tagNum)
+                for (cTagIdx in 0 until tagNum)
+                    if (pTagIdx != rootId && cTagIdx != rootId) {
+                        params.chooseProbs[pTagIdx][Dir.L][cTagIdx] = Math.random()
+                        params.chooseProbs[pTagIdx][Dir.R][cTagIdx] = Math.random()
+                    }
+        }
+        ChooseProbInitMode.PRIOR ->{
+            for (pTagIdx in 0 until tagNum)
+                for (cTagIdx in 0 until tagNum)
+                    if (pTagIdx != rootId && cTagIdx != rootId) {
+                        params.chooseProbs[pTagIdx][Dir.L][cTagIdx] = 1.0
+                        params.chooseProbs[pTagIdx][Dir.R][cTagIdx] = 1.0
+                    }
+            params.chooseProbs[rootId][Dir.R][tagToId["VBZ"]!!] = 3.0
+            params.chooseProbs[rootId][Dir.R][tagToId["VBD"]!!] = 3.0
+            params.chooseProbs[rootId][Dir.R][tagToId["VBP"]!!] = 3.0
+            normalizeDoubleArray_(params.chooseProbs)
         }
     }
 }

@@ -1,8 +1,6 @@
 package dugu9sword.dmv
 
-import dugu9sword.Color
-import dugu9sword.Sentence
-import dugu9sword.yellow
+import dugu9sword.*
 
 // Given a sentence and the params, calculate the expected count
 // for different rules.
@@ -12,6 +10,27 @@ fun expectCount(sentence: Sentence, params: Params): Count {
 
     val tags = sentence.map { it.tag }
     val sentenceSize = sentence.size
+
+//    var sum = 0.0
+//    for (h in 1 until 3) {
+//        for (seal in listOf(Seal.SEALED, Seal.R_UNSEALED, Seal.L_UNSEALED))
+//            sum += io.inside(seal, h, 1, 3) * io.outside(seal, h, 1, 3)
+//    }
+//    dbg.log(sum, Color.RED)
+//    dbg.log(io.outside(Seal.R_UNSEALED, 1, 1, 1), Color.RED)
+//    dbg.log(io.inside(Seal.SEALED, 0, 0, sentenceSize - 1), Color.RED)
+
+//    dbg.log(io.inside(Seal.SEALED, 3, 2, 3), Color.RED)
+//    dbg.log(io.outside(Seal.SEALED, 3, 2, 3), Color.RED)
+//    dbg.log(io.count(Seal.SEALED, 3, 2, 3), Color.RED)
+//
+//    dbg.log(io.inside(Seal.L_UNSEALED, 3, 2, 3), Color.RED)
+//    dbg.log(io.outside(Seal.L_UNSEALED, 3, 2, 3), Color.RED)
+//    dbg.log(io.count(Seal.L_UNSEALED, 3, 2, 3), Color.RED)
+
+//    dbg.log(tags)
+//    dbg.log(view(params.stopProbs, tags[2]), Color.RED)
+//    exit()
 
 //    dbg.log(io.outside(Seal.SEALED, 1,1,4), Color.RED)
 
@@ -38,7 +57,7 @@ fun expectCount(sentence: Sentence, params: Params): Count {
             count.whetherToStopCases[hTagIdx][Dir.L][Valence.ADJ] += io.count(Seal.L_UNSEALED, h, h, j)
         }
         // h, right, adj
-        count.decideToStopCases[hTagIdx][Dir.R][Valence.ADJ] += io.count(Seal.SEALED, h, h, h)
+        count.decideToStopCases[hTagIdx][Dir.R][Valence.ADJ] += io.count(Seal.L_UNSEALED, h, h, h)
         count.whetherToStopCases[hTagIdx][Dir.R][Valence.ADJ] += io.count(Seal.R_UNSEALED, h, h, h)
         // h, right, non_adj
         for (j in h + 1 until sentenceSize) {
@@ -79,17 +98,24 @@ class InsideOutsideCounter(
     var outsideTimes = 0
 
     fun count(hSeal: Int, h: Int, i: Int, j: Int): Double {
-        return inside(hSeal, h, i, j) * outside(hSeal, h, i, j)
+        return inside(hSeal, h, i, j) *
+                outside(hSeal, h, i, j) /
+//                1.0
+                inside(Seal.SEALED, 0, 0, sentence.size - 1)
     }
 
     // [h⇆]{i..j} -> [h⇆]{k+1,j} + [a-]{i,k}
     fun countLeftAttachment(h: Int, a: Int, i: Int, k: Int, j: Int): Double {
         val hTagIdx = tagToId[tags[h]]!!
         val aTagIdx = tagToId[tags[a]]!!
+        val valence = if (h == k + 1) Valence.ADJ else Valence.NON_ADJ
         val ret = inside(Seal.SEALED, a, i, k) *
                 inside(Seal.L_UNSEALED, h, k + 1, j) *
                 outside(Seal.L_UNSEALED, h, i, j) *
-                params.chooseProbs[hTagIdx][Dir.L][aTagIdx]
+                params.chooseProbs[hTagIdx][Dir.L][aTagIdx] *
+                (1 - params.stopProbs[hTagIdx][Dir.L][valence]) /
+//                1.0
+                inside(Seal.SEALED, 0, 0, sentence.size - 1)
 //        dbg.log("outside: ${tags[h]}${seal_to_label[Seal.L_UNSEALED]}\t[$i, $j] = ${outside(Seal.L_UNSEALED, h, i, j)}\n")
         return ret
     }
@@ -98,10 +124,13 @@ class InsideOutsideCounter(
     fun countRightAttachment(h: Int, a: Int, k: Int, j: Int): Double {
         val hTagIdx = tagToId[tags[h]]!!
         val aTagIdx = tagToId[tags[a]]!!
+        val valence = if (h == k - 1) Valence.ADJ else Valence.NON_ADJ
         val ret = inside(Seal.SEALED, a, k, j) *
                 inside(Seal.R_UNSEALED, h, h, k - 1) *
                 outside(Seal.R_UNSEALED, h, h, j) *
-                params.chooseProbs[hTagIdx][Dir.R][aTagIdx]
+                params.chooseProbs[hTagIdx][Dir.R][aTagIdx] *
+                (1 - params.stopProbs[hTagIdx][Dir.R][valence]) /
+                inside(Seal.SEALED, 0, 0, sentence.size - 1)
 //        if (h == 0)
 //            print("right: $ret\n")
         return ret
@@ -123,7 +152,7 @@ class InsideOutsideCounter(
                  *      h = i
                  * Two cases:
                  *      i = j (BASE CASE)
-                 *          [h→]{i..j} -> [h]
+                 *          [h→]{i..j} -> [h] (NT -> Terminal, with probability 1.0)
                  *      i < j (ATTACH R)
                  *          [h→]{i..j} -> [h→]{i..k-1} + [a-]{k,j}
                  */

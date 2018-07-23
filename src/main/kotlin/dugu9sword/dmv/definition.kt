@@ -83,8 +83,8 @@ class Tree {
 
 
 // Tree banks.
-val trainTreeBank = TreeBank("dataset/wsj_train.p.txt")
-val testTreeBank = TreeBank("dataset/wsj_test.p.txt")
+val trainTreeBank = TreeBank("dataset/wsj_train.nop.txt")
+val testTreeBank = TreeBank("dataset/wsj_test.nop.txt")
 
 
 // Tags.
@@ -92,6 +92,7 @@ val tagToId = trainTreeBank.tagDict
 val idToTag = tagToId.map { it.value to it.key }.toMap()
 val tagNum = tagToId.size
 val allTags = trainTreeBank.tagDict.map { it.key }
+val rootId = tagToId[Special.ROOT]
 
 // Params of the model.
 class Params {

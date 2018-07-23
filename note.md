@@ -1,6 +1,11 @@
+#NOTE
+
 - 通过初始化 root 的 stop 约束由于 root 不可能被 attach 两次，此时 root 的 outside 仅 (root, 0, senSize - 1) 非 0。因为其他情况会出现 attach。
 
-
+- unsealed 与 sealed：
+    - count(unsealed) 大，因为存在树结构的包含关系，count 是整棵树的概率，count(unsealed) = count(sealed) + other
+    - inside(unsealed) 大，inside 是部分树的 potential，因为 inside(sealed) = stop * inside(unsealed)
+    - outside(*) 无法确定大小，outside 是部分树的 potential，虽然存在树结构的大小关系，但是 outside(unsealed) = stop * outside(sealed) + other，由于有一个 stop 因子的折扣，无法比较大小
 
 |TAG | INFO | MORE|
 |--- | --- | ---|
