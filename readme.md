@@ -4,7 +4,6 @@
 The code is an implementation of:
 - A **left/right-branch** baseline.
 - Dan Klein's DMV model ( named "**Dependency Model with Valence**", `ACL-2004` ). 
-<!--> - Yong Jiang's neural version ( `EMNLP-2016`  ). (*not implemented yet*)
 
 The directed dependency accuracy(DDA) reported in Klein's paper is about 43.2%. In this implementation, the DDA is sensitive to parameter initialization.
 The choosing probability can be initialized in several ways:
@@ -17,7 +16,9 @@ Some notes can be found in `note.md`.
 
 ## About the Code
 Just run the file which is runnable...
+
 I am a little lazy so that I didn't refactor the code carefully...
+
 Maybe there are some useless code segments for debug...
 
 ## DataSet
