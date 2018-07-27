@@ -11,36 +11,6 @@ fun expectCount(sentence: Sentence, params: Params): Count {
     val tags = sentence.map { it.tag }
     val sentenceSize = sentence.size
 
-//    var sum = 0.0
-//    for (h in 1 until 3) {
-//        for (seal in listOf(Seal.SEALED, Seal.R_UNSEALED, Seal.L_UNSEALED))
-//            sum += io.inside(seal, h, 1, 3) * io.outside(seal, h, 1, 3)
-//    }
-//    dbg.log(sum, Color.RED)
-//    dbg.log(io.outside(Seal.R_UNSEALED, 1, 1, 1), Color.RED)
-//    dbg.log(io.inside(Seal.SEALED, 0, 0, sentenceSize - 1), Color.RED)
-
-//    dbg.log(io.inside(Seal.SEALED, 3, 2, 3), Color.RED)
-//    dbg.log(io.outside(Seal.SEALED, 3, 2, 3), Color.RED)
-//    dbg.log(io.count(Seal.SEALED, 3, 2, 3), Color.RED)
-//
-//    dbg.log(io.inside(Seal.L_UNSEALED, 3, 2, 3), Color.RED)
-//    dbg.log(io.outside(Seal.L_UNSEALED, 3, 2, 3), Color.RED)
-//    dbg.log(io.count(Seal.L_UNSEALED, 3, 2, 3), Color.RED)
-
-//    dbg.log(tags)
-//    dbg.log(view(params.stopProbs, tags[2]), Color.RED)
-//    exit()
-
-//    dbg.log(io.outside(Seal.SEALED, 1,1,4), Color.RED)
-
-//    dbg.log(io.outside(Seal.R_UNSEALED, 0,0,4), Color.RED)
-//    dbg.log(io.outside(Seal.R_UNSEALED, 0,0,5), Color.RED)
-//
-//    dbg.log(io.inside( Seal.SEALED, 5, 5, 5), Color.RED)
-//    dbg.log(view(params.chooseProbs, "NNP", 'R', tags.toSet().toList()), Color.RED)
-
-
     // count stop rules
     for (h in 0 until sentenceSize) {
         val hTagIdx = tagToId[tags[h]]!!
