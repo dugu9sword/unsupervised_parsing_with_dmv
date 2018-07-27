@@ -37,8 +37,6 @@ The dataset is `WSJ-PTB` in CoNLL format, below is an example:
 *See `pom.xml` for details*
 - Java 1.8 (or higher)
 - Kotlin 1.2 (or higher)
-<!--> - DeepLearning4J 0.9.1 (or higher)
-<!--> - ND4J 0.9.1 (or higher)
 
 ## References
 
