@@ -1,25 +1,30 @@
 # Unsupervised Dependency Parsing with DMV
 
+## About the Code
 
 The code is an implementation of:
 - A **left/right-branch** baseline.
 - Dan Klein's DMV model ( named "**Dependency Model with Valence**", `ACL-2004` ). 
+
+*Some notes can be found in `note.md`.*
+
+Just run the file which is runnable...
+
+I am a little lazy so that I didn't refactor the code carefully...
+
+Maybe there are some useless code segments for debug...
+
+## Accuracy
 
 The directed dependency accuracy(DDA) reported in Klein's paper is about 43.2%. In this implementation, the DDA is sensitive to parameter initialization.
 The choosing probability can be initialized in several ways:
 - Uniform distribution, the DDA is about ~20%
 - Random normal distribution, the DDA is about ~30%
 - Allocating a little more choosing probability on `ROOT->VERB`, the DDA is about ~55%
+
 Similar results can be observed in Jiang's neural version ( `EMNLP-2016` ).
 
-Some notes can be found in `note.md`.
 
-## About the Code
-Just run the file which is runnable...
-
-I am a little lazy so that I didn't refactor the code carefully...
-
-Maybe there are some useless code segments for debug...
 
 ## DataSet
 
