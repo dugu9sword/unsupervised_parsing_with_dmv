@@ -2,7 +2,6 @@ package dugu9sword.dmv
 
 import dugu9sword.*
 import kotlin.math.abs
-import org.nd4j.linalg.factory.Nd4j as nj
 
 fun main(args: Array<String>) {
 
@@ -18,6 +17,7 @@ fun main(args: Array<String>) {
 //    val tagsToShow = trainSentences[0].map { it -> it.tag }.toHashSet().toList()
     val tagsToShow = allTags
     for (epochId in 0 until 1) {
+        val time1=System.currentTimeMillis()
 
         if (epochId == 0) {
             dbg.log(view(params.chooseProbs, "*ROOT", 'R', tagsToShow),
@@ -60,7 +60,7 @@ fun main(args: Array<String>) {
         println(green("[EVALUATION]"))
         val evalSentences = mapOf(
                 "train" to trainSentences
-//                ,"test " to testSentences
+                ,"test " to testSentences
         )
         for ((evalSetName, evalSet) in evalSentences) {
             var totalDDA = Fraction()
@@ -83,6 +83,8 @@ fun main(args: Array<String>) {
             dbg.log("[epoch]: $evalSetName - $epochId, [DDA]: $totalDDA, [UDA]: $totalUDA",
                     Color.RED, Mode.BOTH)
         }
+        val time2=System.currentTimeMillis()
+        dbg.log("[cost] ${(time2-time1)/1000}s")
 
 
     }

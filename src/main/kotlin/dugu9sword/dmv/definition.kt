@@ -1,9 +1,7 @@
 package dugu9sword.dmv
 
 import dugu9sword.*
-import org.bytedeco.javacpp.presets.opencv_core
 import java.util.HashMap
-import org.nd4j.linalg.factory.Nd4j as nj
 
 
 /**
