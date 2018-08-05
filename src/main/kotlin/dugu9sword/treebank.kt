@@ -1,5 +1,6 @@
 package dugu9sword
 
+import java.awt.peer.WindowPeer
 import java.io.BufferedReader
 import java.io.FileReader
 
@@ -72,7 +73,10 @@ class TreeBank(path: String,
                         Special.DIGIT
                     else
                         split[pWord].toLowerCase()
-            sentence.add(WordElement(word, split[pTag], split[pParent].toInt(), split[pArc]))
+            if (split[pParent] == "-")
+                sentence.add(WordElement(word, split[pTag], -1, "-"))
+            else
+                sentence.add(WordElement(word, split[pTag], split[pParent].toInt(), split[pArc]))
         }
         return sentence
     }

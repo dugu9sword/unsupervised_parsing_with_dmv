@@ -4,19 +4,19 @@ import dugu9sword.*
 import kotlin.math.abs
 
 fun main(args: Array<String>) {
-
+//    val wiki = TreeBank("dataset/wiki_88w.nop.txt")
     val trainSentences = trainTreeBank.sentences.filter { it.size in 0..11 }//.subList(0, 100)
     val testSentences = testTreeBank.sentences.filter { it.size in 0..11 }
 
     var params = Params()
-    initChooseProbs(params, trainSentences, ChooseProbInitMode.PRIOR)
+    initChooseProbs(params, trainSentences, ChooseProbInitMode.RANDOM)
     initStopProbs(params, trainSentences)
 
     println("Size: ${trainSentences.size}")
 
 //    val tagsToShow = trainSentences[0].map { it -> it.tag }.toHashSet().toList()
     val tagsToShow = allTags
-    for (epochId in 0 until 1) {
+    for (epochId in 0 until 100) {
         val time1=System.currentTimeMillis()
 
         if (epochId == 0) {
@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
         for (senId in 0 until trainSentences.size) {
             val sentence = trainSentences[senId]
             val sentenceCount = expectCount(sentence = sentence, params = params)
-            println(sentence.map { it -> it.tag })
+//            println(sentence.map { it -> it.tag })
             totalCount += sentenceCount
         }
 
@@ -46,15 +46,15 @@ fun main(args: Array<String>) {
         println(green("[MAXIMIZATION]"))
         params = maximization(count = totalCount)
 
-        dbg.log(view(params.chooseProbs, "*ROOT", 'R', tagsToShow),
-                Color.RED, Mode.BOTH, "epoch - $epochId")
-        dbg.log(view(totalCount.decideToStopCases, "NN"),
-                Color.RED, Mode.BOTH, "epoch - $epochId decide")
-        dbg.log(view(totalCount.whetherToStopCases, "NN"),
-                Color.RED, Mode.BOTH, "epoch - $epochId whether")
-        for (tag in listOf("VB", "NN", "NNP"))
-            dbg.log(view(params.stopProbs, tag),
-                    Color.RED, Mode.BOTH, "epoch - $epochId prob")
+//        dbg.log(view(params.chooseProbs, "*ROOT", 'R', tagsToShow),
+//                Color.RED, Mode.BOTH, "epoch - $epochId")
+//        dbg.log(view(totalCount.decideToStopCases, "NN"),
+//                Color.RED, Mode.BOTH, "epoch - $epochId decide")
+//        dbg.log(view(totalCount.whetherToStopCases, "NN"),
+//                Color.RED, Mode.BOTH, "epoch - $epochId whether")
+//        for (tag in listOf("VB", "NN", "NNP"))
+//            dbg.log(view(params.stopProbs, tag),
+//                    Color.RED, Mode.BOTH, "epoch - $epochId prob")
 
         /** evaluation */
         println(green("[EVALUATION]"))
@@ -72,13 +72,13 @@ fun main(args: Array<String>) {
                 val uda = computeAccuracy(sentence = sentence, prediction = prediction, isDirected = false)
                 totalDDA += dda
                 totalUDA += uda
-                println("#$evalSetName $senId:\n" +
-                        "words: ${sentence.map { it -> it.word }}\n" +
-                        "tags:  ${sentence.map { it -> it.tag }}\n" +
-                        "pred:  $prediction\n" +
-                        "gold:  ${sentence.map { it -> it.head }}\n" +
-                        "DDA :  $dda\n" +
-                        "UDA :  $uda")
+//                println("#$evalSetName $senId:\n" +
+//                        "words: ${sentence.map { it -> it.word }}\n" +
+//                        "tags:  ${sentence.map { it -> it.tag }}\n" +
+//                        "pred:  $prediction\n" +
+//                        "gold:  ${sentence.map { it -> it.head }}\n" +
+//                        "DDA :  $dda\n" +
+//                        "UDA :  $uda")
             }
             dbg.log("[epoch]: $evalSetName - $epochId, [DDA]: $totalDDA, [UDA]: $totalUDA",
                     Color.RED, Mode.BOTH)
