@@ -5,8 +5,8 @@ import kotlin.math.abs
 
 fun main(args: Array<String>) {
 //    val wiki = TreeBank("dataset/wiki_88w.nop.txt")
-    val trainSentences = trainTreeBank.sentences.filter { it.size in 0..11 }//.subList(0, 100)
-    val testSentences = testTreeBank.sentences.filter { it.size in 0..11 }
+    val trainSentences = trainTreeBank.sentences.filter { it.size in 0..10 }//.subList(0, 100)
+    val testSentences = testTreeBank.sentences.filter { it.size in 0..10 }
 
     var params = Params()
     initChooseProbs(params, trainSentences, ChooseProbInitMode.RANDOM)
@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 //    val tagsToShow = trainSentences[0].map { it -> it.tag }.toHashSet().toList()
     val tagsToShow = allTags
     for (epochId in 0 until 100) {
-        val time1=System.currentTimeMillis()
+        val time1 = System.currentTimeMillis()
 
         if (epochId == 0) {
             dbg.log(view(params.chooseProbs, "*ROOT", 'R', tagsToShow),
@@ -44,6 +44,19 @@ fun main(args: Array<String>) {
 
         /** maximization */
         println(green("[MAXIMIZATION]"))
+        val laplaceCount = Count()
+        for (i in 0 until laplaceCount.chooseCases.size)
+            for (j in 0 until laplaceCount.chooseCases[0].size)
+                for (k in 0 until laplaceCount.chooseCases[0][0].size)
+                    laplaceCount.chooseCases[i][j][k] = 0.0
+        for (i in 0 until laplaceCount.decideToStopCases.size)
+            for (j in 0 until laplaceCount.decideToStopCases[0].size) {
+                laplaceCount.decideToStopCases[i][j][Valence.ADJ] = 0.0
+                laplaceCount.whetherToStopCases[i][j][Valence.ADJ] = 0.0
+                laplaceCount.decideToStopCases[i][j][Valence.NON_ADJ] = 0.0
+                laplaceCount.whetherToStopCases[i][j][Valence.NON_ADJ] = 0.0
+            }
+        totalCount += laplaceCount
         params = maximization(count = totalCount)
 
 //        dbg.log(view(params.chooseProbs, "*ROOT", 'R', tagsToShow),
@@ -59,8 +72,8 @@ fun main(args: Array<String>) {
         /** evaluation */
         println(green("[EVALUATION]"))
         val evalSentences = mapOf(
-                "train" to trainSentences
-                ,"test " to testSentences
+//                "train" to trainSentences,
+                "test " to testSentences
         )
         for ((evalSetName, evalSet) in evalSentences) {
             var totalDDA = Fraction()
@@ -83,8 +96,8 @@ fun main(args: Array<String>) {
             dbg.log("[epoch]: $evalSetName - $epochId, [DDA]: $totalDDA, [UDA]: $totalUDA",
                     Color.RED, Mode.BOTH)
         }
-        val time2=System.currentTimeMillis()
-        dbg.log("[cost] ${(time2-time1)/1000}s")
+        val time2 = System.currentTimeMillis()
+        dbg.log("[cost] ${(time2 - time1) / 1000}s")
 
 
     }
@@ -160,8 +173,9 @@ fun initChooseProbs(params: Params, sentences: List<Sentence>, initMode: ChooseP
                         params.chooseProbs[pTagIdx][Dir.L][cTagIdx] = Math.random()
                         params.chooseProbs[pTagIdx][Dir.R][cTagIdx] = Math.random()
                     }
+            normalizeDoubleArray_(params.chooseProbs)
         }
-        ChooseProbInitMode.PRIOR ->{
+        ChooseProbInitMode.PRIOR -> {
             for (pTagIdx in 0 until tagNum)
                 for (cTagIdx in 0 until tagNum)
                     if (pTagIdx != rootId && cTagIdx != rootId) {
